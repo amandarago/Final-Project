@@ -125,6 +125,11 @@ colnames(import21)=
 import21 = subset(import21, select = -bike_type)
 
 data = rbind(import01,import02,import03,import04,import05,import06,import07,import08,import09,
-             import10,import11,import12,import13,import14,import15,import16,import17,import19,
+             import10,import11,import12,import13,import14,import15,import16,import17,import18,import19,
              import20,import21)
+
+rm(import01,import02,import03,import04,import05,import06,import07,import08,import09,
+   import10,import11,import12,import13,import14,import15,import16,import17,import18,import19,
+   import20,import21)
+
 ########################################################## Data Cleansing #######################################################
