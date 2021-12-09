@@ -157,3 +157,18 @@ rm(import01,import02,import03,import04,import05,import06,import07,import08,impor
 
 ########################################################## Data Cleansing #######################################################
 
+#This will turn the list of rentals into hourly demand
+
+hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
+
+hourly_demand %>% head()
+
+demand_df = data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
+
+hourly_demand = left_join(hourly_demand,demand_df,by="hour")
+
+hourly_demand[is.na(hourly_demand)] = 0
+
+rm(demand_data,demand_df)
+
+hourly_demand %>% head(20)
