@@ -240,3 +240,47 @@ NorthHollywood_hourly_demand %>%
   slice(which(NorthHollywood_hourly_demand$hour == mdy_hm("06-01-2019 01:00")):dim(NorthHollywood_hourly_demand)[1]) %>% 
   ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
 
+############################################## Creating Time Series Objects ###################################################
+
+#Aggregate(Total) - Testing: July 1 2021 - Sep 30 2021
+
+total.y.train = msts(total_hourly_demand$actual_demand[total_hourly_demand$hour >= as.Date("2016-07-07",format=c("%Y-%m-%d")) &
+     total_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+total.y.test = msts(total_hourly_demand$actual_demand[total_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
+      total_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+#DTLA - Testing: July 1 2021 - Sep 30 2021
+
+DTLA.y.train = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= as.Date("2016-07-07",format=c("%Y-%m-%d")) &
+      DTLA_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+DTLA.y.test = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
+      DTLA_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+#Westside - Training: Sep 1 2017 - June 30 2021 Testing: July 1 2021 - Sep 30 2021
+
+Westside.y.train = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= as.Date("2017-09-01",format=c("%Y-%m-%d")) &
+      Westside_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+Westside.y.test = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
+      Westside_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+#North Hollywood - Training Aug 5 2019- June 30 2021 Testing: July 1 2021 - Sep 30 2021
+
+NorthHollywood.y.train = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2019-08-05",format=c("%Y-%m-%d")) &
+      NorthHollywood_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+NorthHollywood.y.test = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
+      NorthHollywood_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+##################################################### ARIMA ####################################################
+
+
+################################################### Exponential Smoothing ####################################################
+
+
+##################################################### Neural Network ####################################################
+
+
+
