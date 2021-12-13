@@ -172,3 +172,47 @@ hourly_demand[is.na(hourly_demand)] = 0
 rm(demand_data,demand_df)
 
 hourly_demand %>% head(20)
+
+#Splitting data into separate regions:
+
+import19 = import("https://bikeshare.metro.net/wp-content/uploads/2021/10/metro-bike-share-stations-2021-10-01.csv")
+colnames(import19)=
+  c("station_id","station_name","station_creation_date","region","status")
+import19 = subset(import19, select = -c(station_name,station_creation_date,status))
+
+data = left_join(data,import19,by=c("start_station"="station_id"))
+
+rm(import19)
+
+DTLA_data = data[ which(data$region=='DTLA'),]
+Pasadena_data = data[ which(data$region=='Pasadena'),]
+Westside_data = data[ which(data$region=='Westside'),]
+NorthHollywood_data = data[ which(data$region=='North Hollywood'),]
+
+DTLA_hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
+DTLA_demand_df = DTLA_data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
+DTLA_hourly_demand = left_join(DTLA_hourly_demand,DTLA_demand_df,by="hour")
+DTLA_hourly_demand[is.na(DTLA_hourly_demand)] = 0
+rm(DTLA_demand_df)
+rm(DTLA_data)
+
+Pasadena_hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
+Pasadena_demand_df = Pasadena_data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
+Pasadena_hourly_demand = left_join(Pasadena_hourly_demand,Pasadena_demand_df,by="hour")
+Pasadena_hourly_demand[is.na(Pasadena_hourly_demand)] = 0
+rm(Pasadena_demand_df)
+rm(Pasadena_data)
+
+Westside_hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
+Westside_demand_df = Westside_data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
+Westside_hourly_demand = left_join(Westside_hourly_demand,Westside_demand_df,by="hour")
+Westside_hourly_demand[is.na(Westside_hourly_demand)] = 0
+rm(Westside_demand_df)
+rm(Westside_data)
+
+NorthHollywood_hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
+NorthHollywood_demand_df = NorthHollywood_data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
+NorthHollywood_hourly_demand = left_join(NorthHollywood_hourly_demand,NorthHollywood_demand_df,by="hour")
+NorthHollywood_hourly_demand[is.na(NorthHollywood_hourly_demand)] = 0
+rm(NorthHollywood_demand_df)
+rm(NorthHollywood_data)
