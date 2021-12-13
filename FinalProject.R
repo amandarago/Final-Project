@@ -157,22 +157,6 @@ rm(import01,import02,import03,import04,import05,import06,import07,import08,impor
 
 ########################################################## Data Cleansing #######################################################
 
-#This will turn the list of rentals into hourly demand
-
-hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
-
-hourly_demand %>% head()
-
-demand_df = data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
-
-hourly_demand = left_join(hourly_demand,demand_df,by="hour")
-
-hourly_demand[is.na(hourly_demand)] = 0
-
-rm(demand_data,demand_df)
-
-hourly_demand %>% head(20)
-
 #Splitting data into separate regions:
 
 import19 = import("https://bikeshare.metro.net/wp-content/uploads/2021/10/metro-bike-share-stations-2021-10-01.csv")
@@ -183,6 +167,17 @@ import19 = subset(import19, select = -c(station_name,station_creation_date,statu
 data = left_join(data,import19,by=c("start_station"="station_id"))
 
 rm(import19)
+
+#This will turn the list of rentals into hourly demand (for aggregate, regions DTLA, Westside, and North Hollywood)
+
+data = data[c(which(data$region=='DTLA'),which(data$region=='Westside'),which(data$region=='North Hollywood')),]
+total_hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
+demand_df = data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
+total_hourly_demand = left_join(total_hourly_demand,demand_df,by="hour")
+total_hourly_demand[is.na(total_hourly_demand)] = 0
+rm(demand_df)
+
+total_hourly_demand %>% head(20)
 
 DTLA_data = data[ which(data$region=='DTLA'),]
 Pasadena_data = data[ which(data$region=='Pasadena'),]
@@ -216,3 +211,32 @@ NorthHollywood_hourly_demand = left_join(NorthHollywood_hourly_demand,NorthHolly
 NorthHollywood_hourly_demand[is.na(NorthHollywood_hourly_demand)] = 0
 rm(NorthHollywood_demand_df)
 rm(NorthHollywood_data)
+
+##################################################### Data Visualization ####################################################
+
+#Aggregate (Total)
+total_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
+
+#DTLA
+DTLA_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
+
+#Pasadena
+Pasadena_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
+#It seems like all Pasadena stations are inactive, so no need to forecast this region
+
+#Westside
+Westside_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
+#Looks like data starts about halfway through 2017
+
+Westside_hourly_demand %>% 
+  slice(which(Westside_hourly_demand$hour == mdy_hm("06-01-2017 01:00")):dim(Westside_hourly_demand)[1]) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
+
+#North Hollywood
+NorthHollywood_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
+#Looks like data starts about halfway through 2019
+
+NorthHollywood_hourly_demand %>% 
+  slice(which(NorthHollywood_hourly_demand$hour == mdy_hm("06-01-2019 01:00")):dim(NorthHollywood_hourly_demand)[1]) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
+
