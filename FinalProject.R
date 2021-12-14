@@ -1,3 +1,6 @@
+#DSO 424 - Final Project
+#Group 3 - Beck Latham, Amanda Rago, Anusha Singh, Lepakshi Poonamallee
+
 rm(list = ls())
 #To import data use rio package
 #https://www.rdocumentation.org/packages/rio/versions/0.5.27
@@ -177,6 +180,7 @@ Westside_data = data[ which(data$region=='Westside'),]
 NorthHollywood_data = data[ which(data$region=='North Hollywood'),]
 
 #This will turn the list of rentals into hourly demand (for aggregate, regions DTLA, Westside, and North Hollywood)
+#These regions chosen because they match the requested regions from the project description
 data = data[c(which(data$region=='DTLA'),which(data$region=='Westside'),which(data$region=='North Hollywood')),]
 total_hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
 demand_df = data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
@@ -261,6 +265,7 @@ DTLA.y.test = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= y
                                                       DTLA_hourly_demand$hour <= ymd_hm("2021-09-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
 
 #Westside - Training: Sep 1 2017 - June 30 2021 Testing: July 1 2021 - Sep 30 2021
+#Training set begins when data begins for this region
 
 Westside.y.train = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= ymd_hm("2017-09-01 00:00") &
                                                                Westside_hourly_demand$hour <= ymd_hm("2021-06-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
@@ -269,6 +274,7 @@ Westside.y.test = msts(Westside_hourly_demand$actual_demand[Westside_hourly_dema
                                                               Westside_hourly_demand$hour <= ymd_hm("2021-09-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
 
 #North Hollywood - Training Aug 5 2019- June 30 2021 Testing: July 1 2021 - Sep 30 2021
+#Training set begins when data begins for this region
 
 NorthHollywood.y.train = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= ymd_hm("2019-08-05 00:00") &
                                                                            NorthHollywood_hourly_demand$hour <= ymd_hm("2021-06-30 23:00")],seasonal.periods = c(24,24*7))
@@ -276,7 +282,8 @@ NorthHollywood.y.train = msts(NorthHollywood_hourly_demand$actual_demand[NorthHo
 NorthHollywood.y.test = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= ymd_hm("2021-07-01 00:00") &
                                                                           NorthHollywood_hourly_demand$hour <= ymd_hm("2021-09-30 23:00")],seasonal.periods = c(24,24*7))
 
-#Yearly seasonality removed because we have less than two years of training data.
+#Yearly seasonality removed because we have less than two years of training data. 
+#And very little data exists to prove there is yearly seasonality.
 
 ##################################################### Model Building ####################################################
 
@@ -452,6 +459,8 @@ smape(as.numeric(NorthHollywood.y.test),as.numeric(M2.NorthHollywoodF[["mean"]])
 #sMAPE = 1.93
 
 ##################################################### Neural Network ####################################################
+
+#NOTE: Run times for Neural Networks are very long.
 
 ######## Aggregate (Total)
 
@@ -784,8 +793,12 @@ daily.total %>% slice(1821:(1821+7)+20) %>%
   ggplot(aes(x=day,y=actual_demand))+geom_line()+
   geom_line(aes(x=day,y=M6.total),col="red")+theme_bw()
 
-smape(daily.total$actual_demand[(length(total.y.train)+1):dim(total_hourly_demand)[1]],
-      total_hourly_demand$M4.total[(length(total.y.train)+1):dim(total_hourly_demand)[1]])
+smape(daily.total$actual_demand[1821:dim(daily.total)[1]],
+      daily.total$M6.total[1821:dim(daily.total)[1]])
+
+#sMAPE: 0.17
+#This shows that the 0's in our data does throw it off quite a bit. Being able to simplify the data into daily values would
+#help improve the accuracy, but then you couldn't have as granular data as you might want.
 
 #MAPE on Testing:
 
@@ -833,7 +846,7 @@ mean(abs((daily.total$actual_demand[1821:dim(daily.total)[1]] -
 #It appears that our more complicated models excelled for data sets where there was more data given. For the total and DTLA
 #regions, the Neural Network and ARIMA models performed better because there was the most amount of data possible. For the
 #regions where there was less data, exponential smoothing and linear regression did better, potentially because they were less
-#overfit. The accuracy on the last two models are lower also because when there are less bike rides to model the data off of,
+#overfit. The accuracy on the last two regions are lower also because when there are less bike rides to model the data off of,
 #it is more difficult to predict reliable patterns.
 
 ######### Some things to consider for future research:
@@ -852,3 +865,4 @@ mean(abs((daily.total$actual_demand[1821:dim(daily.total)[1]] -
 #There seems to be some sort of intervention for the Westside in late 2020. Although not very much data can be used to model
 #after this time, it might produce a more accurate result if it was. Our best guess is that more bikes were put in the Westside
 #at this time which dramatically increased the number of rides.
+
