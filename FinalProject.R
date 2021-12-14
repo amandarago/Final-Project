@@ -307,7 +307,7 @@ data.frame(Time = 1:length(as.numeric(total.y.test)),
   geom_line(aes(x=Time,y=M1.total.prediction),col="red")+theme_bw()
 
 smape(as.numeric(total.y.test),as.numeric(M1.totalF[["mean"]]))
-#sMAPE = 0.53%
+#sMAPE = 0.53
 
 ####### DTLA
 
@@ -328,7 +328,7 @@ data.frame(Time = 1:length(as.numeric(DTLA.y.test)),
   geom_line(aes(x=Time,y=M1.DTLA.prediction),col="red")+theme_bw()
 
 smape(as.numeric(DTLA.y.test),as.numeric(M1.DTLAF[["mean"]]))
-#sMAPE = 0.60%
+#sMAPE = 0.60
 
 ####### Westside
 
@@ -349,7 +349,7 @@ data.frame(Time = 1:length(as.numeric(Westside.y.test)),
   geom_line(aes(x=Time,y=M1.Westside.prediction),col="red")+theme_bw()
 
 smape(as.numeric(Westside.y.test),as.numeric(M1.WestsideF[["mean"]]))
-#sMAPE = 0.79%
+#sMAPE = 0.79
 
 
 ####### North Hollywood
@@ -371,7 +371,7 @@ data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
   geom_line(aes(x=Time,y=M1.NorthHollywood.prediction),col="red")+theme_bw()
 
 smape(as.numeric(NorthHollywood.y.test),as.numeric(M1.NorthHollywoodF[["mean"]]))
-#sMAPE = 1.94%
+#sMAPE = 1.94
 
 ################################################### Exponential Smoothing ####################################################
 
@@ -393,7 +393,7 @@ data.frame(Time = 1:length(as.numeric(total.y.test)),
   geom_line(aes(x=Time,y=M2.total.prediction),col="red")+theme_bw()
 
 smape(as.numeric(total.y.test),as.numeric(M2.totalF[["mean"]]))
-#sMAPE = 0.54%
+#sMAPE = 0.54
 
 ####### DTLA
 
@@ -410,7 +410,7 @@ data.frame(Time = 1:length(as.numeric(DTLA.y.test)), DTLA.y.test = as.numeric(DT
   geom_line(aes(x=Time,y=M2.DTLA.prediction),col="red") + theme_bw()
 
 smape(as.numeric(DTLA.y.test),as.numeric(M2.DTLAF[["mean"]]))
-#sMAPE = 0.60%
+#sMAPE = 0.60
 
 ####### Westside
 
@@ -429,7 +429,7 @@ data.frame(Time = 1:length(as.numeric(Westside.y.test)),
   geom_line(aes(x=Time,y=M2.Westside.prediction),col="red") + theme_bw()
 
 smape(as.numeric(Westside.y.test),as.numeric(M2.WestsideF[["mean"]]))
-#sMAPE = 0.77%
+#sMAPE = 0.77
 
 ####### North Hollywood
 
@@ -449,7 +449,7 @@ data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
   geom_line(aes(x=Time,y=M2.NorthHollywood.prediction),col="red")+theme_bw()
 
 smape(as.numeric(NorthHollywood.y.test),as.numeric(M2.NorthHollywoodF[["mean"]]))
-#sMAPE = 1.93%
+#sMAPE = 1.93
 
 ##################################################### Neural Network ####################################################
 
@@ -469,7 +469,7 @@ data.frame(Time = 1:length(as.numeric(total.y.test)),
 
 smape(as.numeric(total.y.test),as.numeric(M3.totalF[["mean"]]))
 
-#sMAPE:0.41%
+#sMAPE:0.41
 
 ######## DTLA
 
@@ -487,7 +487,7 @@ data.frame(Time = 1:length(as.numeric(DTLA.y.test)),
 
 smape(as.numeric(DTLA.y.test),as.numeric(M3.DTLAF[["mean"]]))
 
-#sMAPE: 0.63%
+#sMAPE: 0.63
 
 ######## Westside
 
@@ -505,7 +505,7 @@ data.frame(Time = 1:length(as.numeric(Westside.y.test)),
 
 smape(as.numeric(Westside.y.test),as.numeric(M3.WestsideF[["mean"]]))
 
-#sMAPE: 1.38%
+#sMAPE: 1.38
 
 ######## North Hollywood
 
@@ -523,7 +523,7 @@ data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
 
 smape(as.numeric(NorthHollywood.y.test),as.numeric(M3.NorthHollywoodF[["mean"]]))
 
-#sMAPE: 1.93%
+#sMAPE: 1.93
 
 ##################################################### Linear Regression ####################################################
 
@@ -571,7 +571,7 @@ total_hourly_demand %>% slice(length(total.y.train):(length(total.y.train)+(7*24
 smape(total_hourly_demand$actual_demand[(length(total.y.train)+1):dim(total_hourly_demand)[1]],
       total_hourly_demand$M4.total[(length(total.y.train)+1):dim(total_hourly_demand)[1]])
 
-#sMAPE: 0.52%
+#sMAPE: 0.52
 
 ######## DTLA
 
@@ -617,7 +617,7 @@ DTLA_hourly_demand %>% slice(length(DTLA.y.train):(length(DTLA.y.train)+(7*24))+
 smape(DTLA_hourly_demand$actual_demand[(length(DTLA.y.train)+1):dim(DTLA_hourly_demand)[1]],
       DTLA_hourly_demand$M4.DTLA[(length(DTLA.y.train)+1):dim(DTLA_hourly_demand)[1]])
 
-#sMAPE: 0.72%
+#sMAPE: 0.72
 
 ######## Westside
 
@@ -665,7 +665,7 @@ Westside_hourly_demand %>% slice((43676+1):((43676+1)+(7*24))+200) %>%
 smape(Westside_hourly_demand$actual_demand[(43676+1):dim(Westside_hourly_demand)[1]],
       Westside_hourly_demand$M4.Westside[(43676+1):dim(Westside_hourly_demand)[1]])
 
-#sMAPE: 0.97%
+#sMAPE: 0.97
 
 ######## North Hollywood
 
@@ -713,7 +713,7 @@ NorthHollywood_hourly_demand %>% slice(43676:(43676+(7*24))) %>%
 smape(NorthHollywood_hourly_demand$actual_demand[(43676+1):dim(NorthHollywood_hourly_demand)[1]],
       NorthHollywood_hourly_demand$M4.NorthHollywood[(43676+1):dim(NorthHollywood_hourly_demand)[1]])
 
-#sMAPE: 1.93%
+#sMAPE: 1.93
 
 ##################################################### Prophet ####################################################
 #NOTE:
@@ -741,17 +741,17 @@ prophet_forecast = data.frame("Prediction"=fitted_prophet$yhat)
 smape(total_hourly_demand$actual_demand[(length(total.y.train)+1):dim(total_hourly_demand)[1]],
       fitted_prophet$yhat[(length(total.y.train)+1):dim(total_hourly_demand)[1]])
 
-#sMAPE: 0.51%
+#sMAPE: 0.51
 
 ##################################################### Model Selection ####################################################
 
-#Aggregate (Total): Lowest sMAPE: Neural Network (0.41%)
+#Aggregate (Total): Lowest sMAPE: Neural Network (0.41)
 
-#DTLA: Lowest sMAPE: ARIMA (0.60%)
+#DTLA: Lowest sMAPE: ARIMA (0.60)
 
-#Westside: Lowest sMAPE: Exponential Smoothing (0.77%)
+#Westside: Lowest sMAPE: Exponential Smoothing (0.77)
 
-#North Hollywood: Lowest sMAPE: Linear Regression (1.93%)
+#North Hollywood: Lowest sMAPE: Linear Regression (1.93)
 
 ##################################################### Reflection #########################################################
 
