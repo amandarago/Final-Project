@@ -1,3 +1,4 @@
+rm(list = ls())
 #To import data use rio package
 #https://www.rdocumentation.org/packages/rio/versions/0.5.27
 #https://subscription.packtpub.com/book/big-data-and-business-intelligence/9781784391034/1/ch01lvl1sec15/loading-your-data-into-r-with-rio-packages
@@ -160,14 +161,14 @@ rm(import01,import02,import03,import04,import05,import06,import07,import08,impor
 
 #Splitting data into separate regions:
 
-import19 = import("https://bikeshare.metro.net/wp-content/uploads/2021/10/metro-bike-share-stations-2021-10-01.csv")
-colnames(import19)=
+import.regions = import("https://bikeshare.metro.net/wp-content/uploads/2021/10/metro-bike-share-stations-2021-10-01.csv")
+colnames(import.regions)=
   c("station_id","station_name","station_creation_date","region","status")
-import19 = subset(import19, select = -c(station_name,station_creation_date,status))
+import.regions = subset(import.regions, select = -c(station_name,station_creation_date,status))
 
-data = left_join(data,import19,by=c("start_station"="station_id"))
+data = left_join(data,import.regions,by=c("start_station"="station_id"))
 
-rm(import19)
+rm(import.regions)
 
 #This will turn the list of rentals into hourly demand (for aggregate, regions DTLA, Westside, and North Hollywood)
 
@@ -238,7 +239,7 @@ NorthHollywood_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand))+geom_line()
 #Looks like data starts about halfway through 2019
 
 NorthHollywood_hourly_demand %>% 
-  slice(which(NorthHollywood_hourly_demand$hour == mdy_hm("06-01-2019 01:00")):dim(NorthHollywood_hourly_demand)[1]) %>% 
+  slice(which(NorthHollywood_hourly_demand$hour == mdy_hm("08-05-2019 01:00")):dim(NorthHollywood_hourly_demand)[1]) %>% 
   ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
 
 ############################################## Creating Time Series Objects ###################################################
@@ -307,11 +308,13 @@ data.frame(Time = 1:length(as.numeric(total.y.test)),
   geom_line(aes(x=Time,y=M1.total.prediction),col="red")+theme_bw()
 
 smape(as.numeric(total.y.test),as.numeric(M1.totalF[["mean"]]))
+#SMAPE: 0.61%
 
 ################################################### Exponential Smoothing ####################################################
 
 
 ##################################################### Neural Network ####################################################
+
 
 
 
