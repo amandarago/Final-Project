@@ -4,9 +4,10 @@ rm(list = ls())
 #https://subscription.packtpub.com/book/big-data-and-business-intelligence/9781784391034/1/ch01lvl1sec15/loading-your-data-into-r-with-rio-packages
 library(tidyverse)
 library(forecast)
-library (rio)
-library (lubridate)
-library (Metrics)
+library(rio)
+library(lubridate)
+library(Metrics)
+library(prophet)
 
 ########################################################## Import Data #######################################################
 
@@ -284,10 +285,10 @@ M.DTLA = mstl(DTLA.y.train)
 M.Westside = mstl(Westside.y.train)
 M.NorthHollywood = mstl(NorthHollywood.y.train)
 
-##################################################### ARIMA ####################################################
+########################################################## ARIMA ####################################################
 
 
-####### Total ########
+######## Aggregate (Total)
 
 M1.totalF = forecast(M.total,method="arima",
                      h=length(total.y.test))
@@ -306,12 +307,12 @@ data.frame(Time = 1:length(as.numeric(total.y.test)),
   geom_line(aes(x=Time,y=M1.total.prediction),col="red")+theme_bw()
 
 smape(as.numeric(total.y.test),as.numeric(M1.totalF[["mean"]]))
-#sMAPE = 0.61%
+#sMAPE = 0.53%
 
-####### DTLA ########
+####### DTLA
 
 M1.DTLAF = forecast(M.DTLA,method="arima",
-                     h=length(DTLA.y.test))
+                    h=length(DTLA.y.test))
 
 autoplot(M1.DTLAF,PI=F)+autolayer(M1.DTLAF$fitted)
 
@@ -327,12 +328,12 @@ data.frame(Time = 1:length(as.numeric(DTLA.y.test)),
   geom_line(aes(x=Time,y=M1.DTLA.prediction),col="red")+theme_bw()
 
 smape(as.numeric(DTLA.y.test),as.numeric(M1.DTLAF[["mean"]]))
-#sMAPE = 0.65%
+#sMAPE = 0.60%
 
-####### Westside ########
+####### Westside
 
 M1.WestsideF = forecast(M.Westside,method="arima",
-                     h=length(Westside.y.test))
+                        h=length(Westside.y.test))
 
 autoplot(M1.WestsideF,PI=F)+autolayer(M1.WestsideF$fitted)
 
@@ -348,13 +349,13 @@ data.frame(Time = 1:length(as.numeric(Westside.y.test)),
   geom_line(aes(x=Time,y=M1.Westside.prediction),col="red")+theme_bw()
 
 smape(as.numeric(Westside.y.test),as.numeric(M1.WestsideF[["mean"]]))
-#sMAPE = 0.89%
+#sMAPE = 0.79%
 
 
-####### North Hollywood ########
+####### North Hollywood
 
 M1.NorthHollywoodF = forecast(M.NorthHollywood,method="arima",
-                     h=length(NorthHollywood.y.test))
+                              h=length(NorthHollywood.y.test))
 
 autoplot(M1.NorthHollywoodF,PI=F)+autolayer(M1.NorthHollywoodF$fitted)
 
@@ -370,10 +371,12 @@ data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
   geom_line(aes(x=Time,y=M1.NorthHollywood.prediction),col="red")+theme_bw()
 
 smape(as.numeric(NorthHollywood.y.test),as.numeric(M1.NorthHollywoodF[["mean"]]))
-#sMAPE = 1.95%
+#sMAPE = 1.94%
 
 ################################################### Exponential Smoothing ####################################################
-####### Total ########
+
+######## Aggregate (Total)
+
 M2.totalF = forecast(M.total,method="ets",
                      h=length(total.y.test))
 
@@ -390,9 +393,10 @@ data.frame(Time = 1:length(as.numeric(total.y.test)),
   geom_line(aes(x=Time,y=M2.total.prediction),col="red")+theme_bw()
 
 smape(as.numeric(total.y.test),as.numeric(M2.totalF[["mean"]]))
-#sMAPE = 0.67%
+#sMAPE = 0.54%
 
-####### DTLA ########
+####### DTLA
+
 M2.DTLAF = forecast(M.DTLA,method="ets", h=length(DTLA.y.test))
 
 autoplot(M2.DTLAF,PI=F)+autolayer(M2.DTLAF$fitted)
@@ -406,9 +410,10 @@ data.frame(Time = 1:length(as.numeric(DTLA.y.test)), DTLA.y.test = as.numeric(DT
   geom_line(aes(x=Time,y=M2.DTLA.prediction),col="red") + theme_bw()
 
 smape(as.numeric(DTLA.y.test),as.numeric(M2.DTLAF[["mean"]]))
-#sMAPE = 0.72%
+#sMAPE = 0.60%
 
-####### Westside ########
+####### Westside
+
 M2.WestsideF = forecast(M.Westside,method="ets", h=length(Westside.y.test))
 
 autoplot(M2.WestsideF,PI=F)+autolayer(M2.WestsideF$fitted)
@@ -424,9 +429,10 @@ data.frame(Time = 1:length(as.numeric(Westside.y.test)),
   geom_line(aes(x=Time,y=M2.Westside.prediction),col="red") + theme_bw()
 
 smape(as.numeric(Westside.y.test),as.numeric(M2.WestsideF[["mean"]]))
-#sMAPE = 0.92%
+#sMAPE = 0.77%
 
-####### North Hollywood ########
+####### North Hollywood
+
 M2.NorthHollywoodF = forecast(M.NorthHollywood,method="ets",
                               h=length(NorthHollywood.y.test))
 
@@ -443,7 +449,332 @@ data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
   geom_line(aes(x=Time,y=M2.NorthHollywood.prediction),col="red")+theme_bw()
 
 smape(as.numeric(NorthHollywood.y.test),as.numeric(M2.NorthHollywoodF[["mean"]]))
-#sMAPE = 1.95%
+#sMAPE = 1.93%
 
 ##################################################### Neural Network ####################################################
+
+######## Aggregate (Total)
+
+M3.total = nnetar(total.y.train,MaxNWts=1177)
+
+M3.totalF = forecast(M3.total,h=length(total.y.test))
+
+autoplot(M3.totalF,PI=F)+autolayer(M3.totalF$fitted)
+
+data.frame(Time = 1:length(as.numeric(total.y.test)),
+           total.y.test = as.numeric(total.y.test),
+           M3.total.prediction = as.numeric(M3.totalF[["mean"]])) %>% slice(1:(7*24)+1000) %>% 
+  ggplot(aes(x=Time,y=total.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M3.total.prediction),col="red")+theme_bw()
+
+smape(as.numeric(total.y.test),as.numeric(M3.totalF[["mean"]]))
+
+#sMAPE:0.41%
+
+######## DTLA
+
+M3.DTLA = nnetar(DTLA.y.train,MaxNWts=1177)
+
+M3.DTLAF = forecast(M3.DTLA,h=length(DTLA.y.test))
+
+autoplot(M3.DTLAF,PI=F)+autolayer(M3.DTLAF$fitted)
+
+data.frame(Time = 1:length(as.numeric(DTLA.y.test)),
+           DTLA.y.test = as.numeric(DTLA.y.test),
+           M3.DTLA.prediction = as.numeric(M3.DTLAF[["mean"]])) %>% slice(1:(7*24)+1000) %>% 
+  ggplot(aes(x=Time,y=DTLA.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M3.DTLA.prediction),col="red")+theme_bw()
+
+smape(as.numeric(DTLA.y.test),as.numeric(M3.DTLAF[["mean"]]))
+
+#sMAPE: 0.63%
+
+######## Westside
+
+M3.Westside = nnetar(Westside.y.train,MaxNWts=1153)
+
+M3.WestsideF = forecast(M3.Westside,h=length(Westside.y.test))
+
+autoplot(M3.WestsideF,PI=F)+autolayer(M3.WestsideF$fitted)
+
+data.frame(Time = 1:length(as.numeric(Westside.y.test)),
+           Westside.y.test = as.numeric(Westside.y.test),
+           M3.Westside.prediction = as.numeric(M3.WestsideF[["mean"]])) %>% slice(1:(7*24)+1000) %>% 
+  ggplot(aes(x=Time,y=Westside.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M3.Westside.prediction),col="red")+theme_bw()
+
+smape(as.numeric(Westside.y.test),as.numeric(M3.WestsideF[["mean"]]))
+
+#sMAPE: 1.38%
+
+######## North Hollywood
+
+M3.NorthHollywood = nnetar(NorthHollywood.y.train)
+
+M3.NorthHollywoodF = forecast(M3.NorthHollywood,h=length(NorthHollywood.y.test))
+
+autoplot(M3.NorthHollywoodF,PI=F)+autolayer(M3.NorthHollywoodF$fitted)
+
+data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
+           NorthHollywood.y.test = as.numeric(NorthHollywood.y.test),
+           M3.NorthHollywood.prediction = as.numeric(M3.NorthHollywoodF[["mean"]])) %>% slice(1:(7*24)+1000) %>% 
+  ggplot(aes(x=Time,y=NorthHollywood.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M3.NorthHollywood.prediction),col="red")+theme_bw()
+
+smape(as.numeric(NorthHollywood.y.test),as.numeric(M3.NorthHollywoodF[["mean"]]))
+
+#sMAPE: 1.93%
+
+##################################################### Linear Regression ####################################################
+
+######## Aggregate (Total)
+
+total_hourly_demand$train_demand = c(total_hourly_demand$actual_demand[1:length(total.y.train)], rep(NA,length(total.y.test)))
+
+total_hourly_demand$HourOfDay = factor(c(rep(1:24, 45884/24), 1:20))
+total_hourly_demand$DoW = factor(wday(total_hourly_demand$hour,label=TRUE))
+total_hourly_demand$Month = factor(month(total_hourly_demand$hour,label=TRUE))
+total_hourly_demand$Trend = (1:45884)
+total_hourly_demand$demandLag1 = lag(total_hourly_demand$train_demand,1)
+total_hourly_demand$demandLag2 = lag(total_hourly_demand$train_demand,2)
+total_hourly_demand$demandLag24 = lag(total_hourly_demand$train_demand,24)
+total_hourly_demand$demandLag168 = lag(total_hourly_demand$train_demand,168)
+
+total_hourly_demand %>% tail(30)
+glimpse(total_hourly_demand)
+
+M4.total = lm(train_demand ~ HourOfDay + DoW + Month+ Trend+
+              demandLag1 + demandLag2 + demandLag24 + demandLag168 +
+              DoW:Month + HourOfDay:Month + DoW:demandLag24,
+              data= total_hourly_demand)
+
+total_hourly_demand$M4.total = predict(M4.total,newdata=total_hourly_demand)
+
+for(i in (length(total.y.train):dim(total_hourly_demand)[1])){
+  total_hourly_demand[i,"demandLag1"]=ifelse(is.na(total_hourly_demand[i-1,"train_demand"]),total_hourly_demand[i-1,"M4.total"],total_hourly_demand[i-1,"train_demand"])
+  total_hourly_demand[i,"demandLag2"]=ifelse(is.na(total_hourly_demand[i-2,"train_demand"]),total_hourly_demand[i-2,"M4.total"],total_hourly_demand[i-2,"train_demand"])
+  total_hourly_demand[i,"demandLag24"]=ifelse(is.na(total_hourly_demand[i-24,"train_demand"]),total_hourly_demand[i-24,"M4.total"],total_hourly_demand[i-24,"train_demand"])
+  total_hourly_demand[i,"demandLag168"]=ifelse(is.na(total_hourly_demand[i-168,"train_demand"]),total_hourly_demand[i-168,"M4.total"],total_hourly_demand[i-168,"train_demand"])
+  total_hourly_demand[i,"M4.total"]=predict(M4.total,total_hourly_demand[i,])
+}
+
+total_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand)) +geom_line() + geom_line(aes(x=hour,y=M4.total),col="blue") + theme_bw()
+
+total_hourly_demand %>% slice(length(total.y.train):dim(total_hourly_demand)[1]) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+
+  geom_line(aes(x=hour,y=M4.total),col="red")+theme_bw()
+
+total_hourly_demand %>% slice(length(total.y.train):(length(total.y.train)+(7*24))+200) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+
+  geom_line(aes(x=hour,y=M4.total),col="red")+theme_bw()
+
+smape(total_hourly_demand$actual_demand[(length(total.y.train)+1):dim(total_hourly_demand)[1]],
+      total_hourly_demand$M4.total[(length(total.y.train)+1):dim(total_hourly_demand)[1]])
+
+#sMAPE: 0.52%
+
+######## DTLA
+
+DTLA_hourly_demand$train_demand = c(DTLA_hourly_demand$actual_demand[1:length(DTLA.y.train)], rep(NA,length(DTLA.y.test)))
+
+DTLA_hourly_demand$HourOfDay = factor(c(rep(1:24, 45884/24), 1:20))
+DTLA_hourly_demand$DoW = factor(wday(DTLA_hourly_demand$hour,label=TRUE))
+DTLA_hourly_demand$Month = factor(month(DTLA_hourly_demand$hour,label=TRUE))
+DTLA_hourly_demand$Trend = (1:45884)
+DTLA_hourly_demand$demandLag1 = lag(DTLA_hourly_demand$train_demand,1)
+DTLA_hourly_demand$demandLag2 = lag(DTLA_hourly_demand$train_demand,2)
+DTLA_hourly_demand$demandLag24 = lag(DTLA_hourly_demand$train_demand,24)
+DTLA_hourly_demand$demandLag168 = lag(DTLA_hourly_demand$train_demand,168)
+
+DTLA_hourly_demand %>% tail(30)
+glimpse(DTLA_hourly_demand)
+
+M4.DTLA = lm(train_demand ~ HourOfDay + DoW + Month+ Trend+
+                demandLag1 + demandLag2 + demandLag24 + demandLag168 +
+                DoW:Month + HourOfDay:Month + DoW:demandLag24,
+                data= DTLA_hourly_demand)
+
+DTLA_hourly_demand$M4.DTLA = predict(M4.DTLA,newdata=DTLA_hourly_demand)
+
+for(i in (length(DTLA.y.train):dim(DTLA_hourly_demand)[1])){
+  DTLA_hourly_demand[i,"demandLag1"]=ifelse(is.na(DTLA_hourly_demand[i-1,"train_demand"]),DTLA_hourly_demand[i-1,"M4.DTLA"],DTLA_hourly_demand[i-1,"train_demand"])
+  DTLA_hourly_demand[i,"demandLag2"]=ifelse(is.na(DTLA_hourly_demand[i-2,"train_demand"]),DTLA_hourly_demand[i-2,"M4.DTLA"],DTLA_hourly_demand[i-2,"train_demand"])
+  DTLA_hourly_demand[i,"demandLag24"]=ifelse(is.na(DTLA_hourly_demand[i-24,"train_demand"]),DTLA_hourly_demand[i-24,"M4.DTLA"],DTLA_hourly_demand[i-24,"train_demand"])
+  DTLA_hourly_demand[i,"demandLag168"]=ifelse(is.na(DTLA_hourly_demand[i-168,"train_demand"]),DTLA_hourly_demand[i-168,"M4.DTLA"],DTLA_hourly_demand[i-168,"train_demand"])
+  DTLA_hourly_demand[i,"M4.DTLA"]=predict(M4.DTLA,DTLA_hourly_demand[i,])
+}
+
+DTLA_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand)) +geom_line() + geom_line(aes(x=hour,y=M4.DTLA),col="blue") + theme_bw()
+
+DTLA_hourly_demand %>% slice(length(DTLA.y.train):dim(DTLA_hourly_demand)[1]) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+
+  geom_line(aes(x=hour,y=M4.DTLA),col="red")+theme_bw()
+
+DTLA_hourly_demand %>% slice(length(DTLA.y.train):(length(DTLA.y.train)+(7*24))+200) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+
+  geom_line(aes(x=hour,y=M4.DTLA),col="red")+theme_bw()
+
+smape(DTLA_hourly_demand$actual_demand[(length(DTLA.y.train)+1):dim(DTLA_hourly_demand)[1]],
+      DTLA_hourly_demand$M4.DTLA[(length(DTLA.y.train)+1):dim(DTLA_hourly_demand)[1]])
+
+#sMAPE: 0.72%
+
+######## Westside
+
+Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour < ymd_hm("2017-09-01 00:00")]=NA
+
+Westside_hourly_demand$train_demand = c(Westside_hourly_demand$actual_demand[1:43676], rep(NA,length(Westside.y.test)))
+
+Westside_hourly_demand$HourOfDay = factor(c(rep(1:24, 45884/24), 1:20))
+Westside_hourly_demand$DoW = factor(wday(Westside_hourly_demand$hour,label=TRUE))
+Westside_hourly_demand$Month = factor(month(Westside_hourly_demand$hour,label=TRUE))
+Westside_hourly_demand$Trend = (1:45884)
+Westside_hourly_demand$demandLag1 = lag(Westside_hourly_demand$train_demand,1)
+Westside_hourly_demand$demandLag2 = lag(Westside_hourly_demand$train_demand,2)
+Westside_hourly_demand$demandLag24 = lag(Westside_hourly_demand$train_demand,24)
+Westside_hourly_demand$demandLag168 = lag(Westside_hourly_demand$train_demand,168)
+
+Westside_hourly_demand %>% tail(30)
+glimpse(Westside_hourly_demand)
+
+M4.Westside = lm(train_demand ~ HourOfDay + DoW + Month+ Trend+
+               demandLag1 + demandLag2 + demandLag24 + demandLag168 +
+               DoW:Month + HourOfDay:Month + DoW:demandLag24,
+             data= Westside_hourly_demand)
+
+Westside_hourly_demand$M4.Westside = predict(M4.Westside,newdata=Westside_hourly_demand)
+
+for(i in (43676:dim(Westside_hourly_demand)[1])){
+  Westside_hourly_demand[i,"demandLag1"]=ifelse(is.na(Westside_hourly_demand[i-1,"train_demand"]),Westside_hourly_demand[i-1,"M4.Westside"],Westside_hourly_demand[i-1,"train_demand"])
+  Westside_hourly_demand[i,"demandLag2"]=ifelse(is.na(Westside_hourly_demand[i-2,"train_demand"]),Westside_hourly_demand[i-2,"M4.Westside"],Westside_hourly_demand[i-2,"train_demand"])
+  Westside_hourly_demand[i,"demandLag24"]=ifelse(is.na(Westside_hourly_demand[i-24,"train_demand"]),Westside_hourly_demand[i-24,"M4.Westside"],Westside_hourly_demand[i-24,"train_demand"])
+  Westside_hourly_demand[i,"demandLag168"]=ifelse(is.na(Westside_hourly_demand[i-168,"train_demand"]),Westside_hourly_demand[i-168,"M4.Westside"],Westside_hourly_demand[i-168,"train_demand"])
+  Westside_hourly_demand[i,"M4.Westside"]=predict(M4.Westside,Westside_hourly_demand[i,])
+}
+
+Westside_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand)) +geom_line() + geom_line(aes(x=hour,y=M4.Westside),col="blue") + theme_bw()
+
+Westside_hourly_demand %>% slice(length(Westside.y.train):dim(Westside_hourly_demand)[1]) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+
+  geom_line(aes(x=hour,y=M4.Westside),col="red")+theme_bw()
+
+Westside_hourly_demand %>% slice((43676+1):((43676+1)+(7*24))+200) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+
+  geom_line(aes(x=hour,y=M4.Westside),col="red")+theme_bw()
+
+smape(Westside_hourly_demand$actual_demand[(43676+1):dim(Westside_hourly_demand)[1]],
+      Westside_hourly_demand$M4.Westside[(43676+1):dim(Westside_hourly_demand)[1]])
+
+#sMAPE: 0.97%
+
+######## North Hollywood
+
+NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour < ymd_hm("2019-08-05 00:00")]=NA
+
+NorthHollywood_hourly_demand$train_demand = c(NorthHollywood_hourly_demand$actual_demand[1:43676], rep(NA,length(NorthHollywood.y.test)))
+
+NorthHollywood_hourly_demand$HourOfDay = factor(c(rep(1:24, 45884/24), 1:20))
+NorthHollywood_hourly_demand$DoW = factor(wday(NorthHollywood_hourly_demand$hour,label=TRUE))
+NorthHollywood_hourly_demand$Month = factor(month(NorthHollywood_hourly_demand$hour,label=TRUE))
+NorthHollywood_hourly_demand$Trend = (1:45884)
+NorthHollywood_hourly_demand$demandLag1 = lag(NorthHollywood_hourly_demand$train_demand,1)
+NorthHollywood_hourly_demand$demandLag2 = lag(NorthHollywood_hourly_demand$train_demand,2)
+NorthHollywood_hourly_demand$demandLag24 = lag(NorthHollywood_hourly_demand$train_demand,24)
+NorthHollywood_hourly_demand$demandLag168 = lag(NorthHollywood_hourly_demand$train_demand,168)
+
+NorthHollywood_hourly_demand %>% tail(30)
+glimpse(NorthHollywood_hourly_demand)
+
+M4.NorthHollywood = lm(train_demand ~ HourOfDay + DoW + Month+ Trend+
+               demandLag1 + demandLag2 + demandLag24 + demandLag168 +
+               DoW:Month + HourOfDay:Month + DoW:demandLag24,
+             data= NorthHollywood_hourly_demand)
+
+NorthHollywood_hourly_demand$M4.NorthHollywood = predict(M4.NorthHollywood,newdata=NorthHollywood_hourly_demand)
+
+for(i in (43676:dim(NorthHollywood_hourly_demand)[1])){
+  NorthHollywood_hourly_demand[i,"demandLag1"]=ifelse(is.na(NorthHollywood_hourly_demand[i-1,"train_demand"]),NorthHollywood_hourly_demand[i-1,"M4.NorthHollywood"],NorthHollywood_hourly_demand[i-1,"train_demand"])
+  NorthHollywood_hourly_demand[i,"demandLag2"]=ifelse(is.na(NorthHollywood_hourly_demand[i-2,"train_demand"]),NorthHollywood_hourly_demand[i-2,"M4.NorthHollywood"],NorthHollywood_hourly_demand[i-2,"train_demand"])
+  NorthHollywood_hourly_demand[i,"demandLag24"]=ifelse(is.na(NorthHollywood_hourly_demand[i-24,"train_demand"]),NorthHollywood_hourly_demand[i-24,"M4.NorthHollywood"],NorthHollywood_hourly_demand[i-24,"train_demand"])
+  NorthHollywood_hourly_demand[i,"demandLag168"]=ifelse(is.na(NorthHollywood_hourly_demand[i-168,"train_demand"]),NorthHollywood_hourly_demand[i-168,"M4.NorthHollywood"],NorthHollywood_hourly_demand[i-168,"train_demand"])
+  NorthHollywood_hourly_demand[i,"M4.NorthHollywood"]=predict(M4.NorthHollywood,NorthHollywood_hourly_demand[i,])
+}
+
+NorthHollywood_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand)) +geom_line() + geom_line(aes(x=hour,y=M4.NorthHollywood),col="blue") + theme_bw()
+
+NorthHollywood_hourly_demand %>% slice(43676:dim(NorthHollywood_hourly_demand)[1]) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+
+  geom_line(aes(x=hour,y=M4.NorthHollywood),col="red")+theme_bw()
+
+NorthHollywood_hourly_demand %>% slice(43676:(43676+(7*24))) %>% 
+  ggplot(aes(x=hour,y=actual_demand))+geom_line()+
+  geom_line(aes(x=hour,y=M4.NorthHollywood),col="red")+theme_bw()
+
+smape(NorthHollywood_hourly_demand$actual_demand[(43676+1):dim(NorthHollywood_hourly_demand)[1]],
+      NorthHollywood_hourly_demand$M4.NorthHollywood[(43676+1):dim(NorthHollywood_hourly_demand)[1]])
+
+#sMAPE: 1.93%
+
+##################################################### Prophet ####################################################
+#NOTE:
+#I decided to run the prophet model on just the aggregate demand just to see if it produces anything as good as the other models.
+#This was just an experiment because prophet is meant for predicting daily growing revenue.
+
+total.prophet = total_hourly_demand
+
+total.prophet = subset(total.prophet, select = -c(actual_demand,HourOfDay,DoW,Month,Trend,
+                                                  demandLag1,demandLag2,demandLag24,demandLag168,M4.total))
+
+colnames(total.prophet) = c("ds","y")
+
+M5 = prophet(daily.seasonality = "auto", weekly.seasonality = "auto", yearly.seasonality = "auto")
+
+M5 = fit.prophet(M5,total.prophet)
+
+fitted_prophet = predict(M5,total.prophet)
+
+plot(M5,fitted_prophet)
+prophet_plot_components(M5,fitted_prophet)
+
+prophet_forecast = data.frame("Prediction"=fitted_prophet$yhat)
+
+smape(total_hourly_demand$actual_demand[(length(total.y.train)+1):dim(total_hourly_demand)[1]],
+      fitted_prophet$yhat[(length(total.y.train)+1):dim(total_hourly_demand)[1]])
+
+#sMAPE: 0.51%
+
+##################################################### Model Selection ####################################################
+
+#Aggregate (Total): Lowest sMAPE: Neural Network (0.41%)
+
+#DTLA: Lowest sMAPE: ARIMA (0.60%)
+
+#Westside: Lowest sMAPE: Exponential Smoothing (0.77%)
+
+#North Hollywood: Lowest sMAPE: Linear Regression (1.93%)
+
+##################################################### Reflection #########################################################
+
+#It appears that our more complicated models excelled for data sets where there was more data given. For the total and DTLA
+#regions, the Neural Network and ARIMA models performed better because there was the most amount of data possible. For the
+#regions where there was less data, exponential smoothing and linear regression did better, potentially because they were less
+#overfit. The accuracy on the last two models are lower also because when there are less bike rides to model the data off of,
+#it is more difficult to predict reliable patterns.
+
+######### Some things to consider for future research:
+
+#Changing the testing set could reveal which models are overfit, or those whose predictive ability decreases more sharply over
+#time. One quarter was chosen as the testing set time because the data set was somewhat small, but particularly small for
+#certain regions.
+
+#We attempted to use covariates in our models, but the variable we wanted to find we were unable to. We could not find hourly 
+#temperature data for these years, as we could only find 2010 and earlier. Some other covariates we would use as regressors
+#would potentially be air quality, rain, or holidays (especially local LA events such as parades and marathons). For the North
+#Hollywood region this would have been particularly useful as we had to remove the yearly seasonality since there was not
+#enough data to model it. Temperature would be a great regressor to replace this missing data as temperature is heavily related
+#to time of the year.
+
+#There seems to be some sort of intervention for the Westside in late 2020. Although not very much data can be used to model
+#after this time, it might produce a more accurate result if it was. Our best guess is that more bikes were put in the Westside
+#at this time which dramatically increased the number of rides.
 
