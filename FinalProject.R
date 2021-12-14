@@ -1,4 +1,3 @@
-rm(list = ls())
 #To import data use rio package
 #https://www.rdocumentation.org/packages/rio/versions/0.5.27
 #https://subscription.packtpub.com/book/big-data-and-business-intelligence/9781784391034/1/ch01lvl1sec15/loading-your-data-into-r-with-rio-packages
@@ -161,14 +160,14 @@ rm(import01,import02,import03,import04,import05,import06,import07,import08,impor
 
 #Splitting data into separate regions:
 
-import.regions = import("https://bikeshare.metro.net/wp-content/uploads/2021/10/metro-bike-share-stations-2021-10-01.csv")
-colnames(import.regions)=
+import19 = import("https://bikeshare.metro.net/wp-content/uploads/2021/10/metro-bike-share-stations-2021-10-01.csv")
+colnames(import19)=
   c("station_id","station_name","station_creation_date","region","status")
-import.regions = subset(import.regions, select = -c(station_name,station_creation_date,status))
+import19 = subset(import19, select = -c(station_name,station_creation_date,status))
 
-data = left_join(data,import.regions,by=c("start_station"="station_id"))
+data = left_join(data,import19,by=c("start_station"="station_id"))
 
-rm(import.regions)
+rm(import19)
 
 #This will turn the list of rentals into hourly demand (for aggregate, regions DTLA, Westside, and North Hollywood)
 
@@ -239,7 +238,7 @@ NorthHollywood_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand))+geom_line()
 #Looks like data starts about halfway through 2019
 
 NorthHollywood_hourly_demand %>% 
-  slice(which(NorthHollywood_hourly_demand$hour == mdy_hm("08-05-2019 01:00")):dim(NorthHollywood_hourly_demand)[1]) %>% 
+  slice(which(NorthHollywood_hourly_demand$hour == mdy_hm("06-01-2019 01:00")):dim(NorthHollywood_hourly_demand)[1]) %>% 
   ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
 
 ############################################## Creating Time Series Objects ###################################################
@@ -287,14 +286,14 @@ M1.NorthHollywood = mstl(NorthHollywood.y.train)
 
 ##################################################### ARIMA ####################################################
 
+
+
+####### Total ########
+
 M1.totalF = forecast(M1.total,method="arima",
-               h=length(total.y.test))
-#               xreg = TempData$Temperature[1:length(total.y.train)], 
-#               newxreg = TempData$Temperature[length(total.y.train)+1:length(total.y.test)])
+                     h=length(total.y.test))
 
 autoplot(M1.totalF,PI=F)+autolayer(M1.totalF$fitted)
-
-accuracy(M1.totalF)
 
 length(as.numeric(total.y.test))
 length(as.numeric(M1.totalF[["mean"]]))
@@ -308,13 +307,75 @@ data.frame(Time = 1:length(as.numeric(total.y.test)),
   geom_line(aes(x=Time,y=M1.total.prediction),col="red")+theme_bw()
 
 smape(as.numeric(total.y.test),as.numeric(M1.totalF[["mean"]]))
-#SMAPE: 0.61%
+#sMAPE = 0.61%
+
+####### DTLA ########
+
+M1.DTLAF = forecast(M1.DTLA,method="arima",
+                     h=length(DTLA.y.test))
+
+autoplot(M1.DTLAF,PI=F)+autolayer(M1.DTLAF$fitted)
+
+length(as.numeric(DTLA.y.test))
+length(as.numeric(M1.DTLAF[["mean"]]))
+
+#Random Weekly Forecast vs. Actual for M1.DTLA
+
+data.frame(Time = 1:length(as.numeric(DTLA.y.test)),
+           DTLA.y.test = as.numeric(DTLA.y.test),
+           M1.DTLA.prediction = as.numeric(M1.DTLAF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+  ggplot(aes(x=Time,y=DTLA.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M1.DTLA.prediction),col="red")+theme_bw()
+
+smape(as.numeric(DTLA.y.test),as.numeric(M1.DTLAF[["mean"]]))
+#sMAPE = 0.65%
+
+####### Westside ########
+
+M1.WestsideF = forecast(M1.Westside,method="arima",
+                     h=length(Westside.y.test))
+
+autoplot(M1.WestsideF,PI=F)+autolayer(M1.WestsideF$fitted)
+
+length(as.numeric(Westside.y.test))
+length(as.numeric(M1.WestsideF[["mean"]]))
+
+#Random Weekly Forecast vs. Actual for M1.Westside
+
+data.frame(Time = 1:length(as.numeric(Westside.y.test)),
+           Westside.y.test = as.numeric(Westside.y.test),
+           M1.Westside.prediction = as.numeric(M1.WestsideF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+  ggplot(aes(x=Time,y=Westside.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M1.Westside.prediction),col="red")+theme_bw()
+
+smape(as.numeric(Westside.y.test),as.numeric(M1.WestsideF[["mean"]]))
+#sMAPE = 0.89%
+
+####### North Hollywood ########
+
+M1.NorthHollywoodF = forecast(M1.NorthHollywood,method="arima",
+                     h=length(NorthHollywood.y.test))
+
+autoplot(M1.NorthHollywoodF,PI=F)+autolayer(M1.NorthHollywoodF$fitted)
+
+length(as.numeric(NorthHollywood.y.test))
+length(as.numeric(M1.NorthHollywoodF[["mean"]]))
+
+#Random Weekly Forecast vs. Actual for M1.NorthHollywood
+
+data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
+           NorthHollywood.y.test = as.numeric(NorthHollywood.y.test),
+           M1.NorthHollywood.prediction = as.numeric(M1.NorthHollywoodF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+  ggplot(aes(x=Time,y=NorthHollywood.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M1.NorthHollywood.prediction),col="red")+theme_bw()
+
+smape(as.numeric(NorthHollywood.y.test),as.numeric(M1.NorthHollywoodF[["mean"]]))
+#sMAPE = 1.95%
 
 ################################################### Exponential Smoothing ####################################################
 
 
 ##################################################### Neural Network ####################################################
-
 
 
 
