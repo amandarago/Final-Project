@@ -246,43 +246,43 @@ NorthHollywood_hourly_demand %>%
 #Aggregate(Total) - Testing: July 1 2021 - Sep 30 2021
 
 total.y.train = msts(total_hourly_demand$actual_demand[total_hourly_demand$hour >= as.Date("2016-07-07",format=c("%Y-%m-%d")) &
-     total_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+                                                         total_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
 
 total.y.test = msts(total_hourly_demand$actual_demand[total_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
-      total_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+                                                        total_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
 
 #DTLA - Testing: July 1 2021 - Sep 30 2021
 
 DTLA.y.train = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= as.Date("2016-07-07",format=c("%Y-%m-%d")) &
-      DTLA_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+                                                       DTLA_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
 
 DTLA.y.test = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
-      DTLA_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+                                                      DTLA_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
 
 #Westside - Training: Sep 1 2017 - June 30 2021 Testing: July 1 2021 - Sep 30 2021
 
 Westside.y.train = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= as.Date("2017-09-01",format=c("%Y-%m-%d")) &
-      Westside_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+                                                               Westside_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
 
 Westside.y.test = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
-      Westside_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+                                                              Westside_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
 
 #North Hollywood - Training Aug 5 2019- June 30 2021 Testing: July 1 2021 - Sep 30 2021
 
 NorthHollywood.y.train = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2019-08-05",format=c("%Y-%m-%d")) &
-      NorthHollywood_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7))
+                                                                           NorthHollywood_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7))
 
 NorthHollywood.y.test = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
-      NorthHollywood_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7))
+                                                                          NorthHollywood_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7))
 
 #Yearly seasonality removed because we have less than two years of training data.
 
 ##################################################### Model Building ####################################################
 
-M1.total = mstl(total.y.train)
-M1.DTLA = mstl(DTLA.y.train)
-M1.Westside = mstl(Westside.y.train)
-M1.NorthHollywood = mstl(NorthHollywood.y.train)
+M.total = mstl(total.y.train)
+M.DTLA = mstl(DTLA.y.train)
+M.Westside = mstl(Westside.y.train)
+M.NorthHollywood = mstl(NorthHollywood.y.train)
 
 ##################################################### ARIMA ####################################################
 
@@ -290,7 +290,7 @@ M1.NorthHollywood = mstl(NorthHollywood.y.train)
 
 ####### Total ########
 
-M1.totalF = forecast(M1.total,method="arima",
+M1.totalF = forecast(M.total,method="arima",
                      h=length(total.y.test))
 
 autoplot(M1.totalF,PI=F)+autolayer(M1.totalF$fitted)
@@ -311,8 +311,8 @@ smape(as.numeric(total.y.test),as.numeric(M1.totalF[["mean"]]))
 
 ####### DTLA ########
 
-M1.DTLAF = forecast(M1.DTLA,method="arima",
-                     h=length(DTLA.y.test))
+M1.DTLAF = forecast(M.DTLA,method="arima",
+                    h=length(DTLA.y.test))
 
 autoplot(M1.DTLAF,PI=F)+autolayer(M1.DTLAF$fitted)
 
@@ -332,8 +332,8 @@ smape(as.numeric(DTLA.y.test),as.numeric(M1.DTLAF[["mean"]]))
 
 ####### Westside ########
 
-M1.WestsideF = forecast(M1.Westside,method="arima",
-                     h=length(Westside.y.test))
+M1.WestsideF = forecast(M.Westside,method="arima",
+                        h=length(Westside.y.test))
 
 autoplot(M1.WestsideF,PI=F)+autolayer(M1.WestsideF$fitted)
 
@@ -353,8 +353,8 @@ smape(as.numeric(Westside.y.test),as.numeric(M1.WestsideF[["mean"]]))
 
 ####### North Hollywood ########
 
-M1.NorthHollywoodF = forecast(M1.NorthHollywood,method="arima",
-                     h=length(NorthHollywood.y.test))
+M1.NorthHollywoodF = forecast(M.NorthHollywood,method="arima",
+                              h=length(NorthHollywood.y.test))
 
 autoplot(M1.NorthHollywoodF,PI=F)+autolayer(M1.NorthHollywoodF$fitted)
 
@@ -376,6 +376,4 @@ smape(as.numeric(NorthHollywood.y.test),as.numeric(M1.NorthHollywoodF[["mean"]])
 
 
 ##################################################### Neural Network ####################################################
-
-
 
