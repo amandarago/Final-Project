@@ -269,6 +269,58 @@ Westside.y.test = msts(Westside_hourly_demand$actual_demand[Westside_hourly_dema
 #North Hollywood - Training Aug 5 2019- June 30 2021 Testing: July 1 2021 - Sep 30 2021
 
 NorthHollywood.y.train = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2019-08-05",format=c("%Y-%m-%d")) &
+      NorthHollywood_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7))
+
+NorthHollywood.y.test = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
+      NorthHollywood_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7))
+
+#Yearly seasonality removed because we have less than two years of training data.
+
+##################################################### Model Buidling ####################################################
+
+M1.total = mstl(total.y.train)
+M1.DTLA = mstl(DTLA.y.train)
+M1.Westside = mstl(Westside.y.train)
+M1.NorthHollywood = mstl(NorthHollywood.y.train)
+
+##################################################### ARIMA ####################################################
+
+M1.totalF = forecast(M1.total,method="arima",
+               h=length(total.y.test))
+#               xreg = TempData$Temperature[1:length(total.y.train)], 
+#               newxreg = TempData$Temperature[length(total.y.train)+1:length(total.y.test)])
+
+autoplot(M1.totalF,PI=F)+autolayer(M1.totalF$fitted)
+
+accuracy(M1.totalF)
+
+length(as.numeric(total.y.test))
+length(as.numeric(M1.totalF[["mean"]]))
+
+#Random Weekly Forecast vs. Actual for M1.total
+
+data.frame(Time = 1:length(as.numeric(total.y.test)),
+           total.y.test = as.numeric(total.y.test),
+           M1.total.prediction = as.numeric(M1.totalF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+  ggplot(aes(x=Time,y=total.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M1.total.prediction),col="red")+theme_bw()
+
+smape(as.numeric(total.y.test),as.numeric(M1.totalF[["mean"]]))
+
+################################################### Exponential Smoothing ####################################################
+
+
+##################################################### Neural Network ####################################################
+
+Westside.y.train = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= as.Date("2017-09-01",format=c("%Y-%m-%d")) &
+      Westside_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+Westside.y.test = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
+      Westside_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+
+#North Hollywood - Training Aug 5 2019- June 30 2021 Testing: July 1 2021 - Sep 30 2021
+
+NorthHollywood.y.train = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2019-08-05",format=c("%Y-%m-%d")) &
       NorthHollywood_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
 
 NorthHollywood.y.test = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
