@@ -1,3 +1,4 @@
+rm(list = ls())
 #To import data use rio package
 #https://www.rdocumentation.org/packages/rio/versions/0.5.27
 #https://subscription.packtpub.com/book/big-data-and-business-intelligence/9781784391034/1/ch01lvl1sec15/loading-your-data-into-r-with-rio-packages
@@ -160,17 +161,21 @@ rm(import01,import02,import03,import04,import05,import06,import07,import08,impor
 
 #Splitting data into separate regions:
 
-import19 = import("https://bikeshare.metro.net/wp-content/uploads/2021/10/metro-bike-share-stations-2021-10-01.csv")
-colnames(import19)=
+import.regions = import("https://bikeshare.metro.net/wp-content/uploads/2021/10/metro-bike-share-stations-2021-10-01.csv")
+colnames(import.regions)=
   c("station_id","station_name","station_creation_date","region","status")
-import19 = subset(import19, select = -c(station_name,station_creation_date,status))
+import.regions = subset(import.regions, select = -c(station_name,station_creation_date,status))
 
-data = left_join(data,import19,by=c("start_station"="station_id"))
+data = left_join(data,import.regions,by=c("start_station"="station_id"))
 
-rm(import19)
+rm(import.regions)
+
+DTLA_data = data[ which(data$region=='DTLA'),]
+Pasadena_data = data[ which(data$region=='Pasadena'),]
+Westside_data = data[ which(data$region=='Westside'),]
+NorthHollywood_data = data[ which(data$region=='North Hollywood'),]
 
 #This will turn the list of rentals into hourly demand (for aggregate, regions DTLA, Westside, and North Hollywood)
-
 data = data[c(which(data$region=='DTLA'),which(data$region=='Westside'),which(data$region=='North Hollywood')),]
 total_hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
 demand_df = data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
@@ -179,11 +184,6 @@ total_hourly_demand[is.na(total_hourly_demand)] = 0
 rm(demand_df)
 
 total_hourly_demand %>% head(20)
-
-DTLA_data = data[ which(data$region=='DTLA'),]
-Pasadena_data = data[ which(data$region=='Pasadena'),]
-Westside_data = data[ which(data$region=='Westside'),]
-NorthHollywood_data = data[ which(data$region=='North Hollywood'),]
 
 DTLA_hourly_demand = data.frame(hour = seq(ymd_hm("2016-07-07 4:00"), ymd_hm("2021-09-30 23:00"), by = "hour"))
 DTLA_demand_df = DTLA_data %>% group_by(hour = floor_date(start_time,"1 hour")) %>% summarize(actual_demand=n())
@@ -238,7 +238,7 @@ NorthHollywood_hourly_demand %>% ggplot(aes(x=hour,y=actual_demand))+geom_line()
 #Looks like data starts about halfway through 2019
 
 NorthHollywood_hourly_demand %>% 
-  slice(which(NorthHollywood_hourly_demand$hour == mdy_hm("06-01-2019 01:00")):dim(NorthHollywood_hourly_demand)[1]) %>% 
+  slice(which(NorthHollywood_hourly_demand$hour == mdy_hm("08-05-2019 01:00")):dim(NorthHollywood_hourly_demand)[1]) %>% 
   ggplot(aes(x=hour,y=actual_demand))+geom_line()+theme_bw()
 
 ############################################## Creating Time Series Objects ###################################################
