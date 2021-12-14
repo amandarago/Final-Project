@@ -390,7 +390,7 @@ data.frame(Time = 1:length(as.numeric(total.y.test)),
   geom_line(aes(x=Time,y=M2.total.prediction),col="red")+theme_bw()
 
 smape(as.numeric(total.y.test),as.numeric(M2.totalF[["mean"]]))
-#sMAPE = %
+#sMAPE = 0.67%
 
 ####### DTLA ########
 M2.DTLAF = forecast(M.DTLA,method="ets", h=length(DTLA.y.test))
@@ -406,7 +406,7 @@ data.frame(Time = 1:length(as.numeric(DTLA.y.test)), DTLA.y.test = as.numeric(DT
   geom_line(aes(x=Time,y=M2.DTLA.prediction),col="red") + theme_bw()
 
 smape(as.numeric(DTLA.y.test),as.numeric(M2.DTLAF[["mean"]]))
-#sMAPE = %
+#sMAPE = 0.72%
 
 ####### Westside ########
 M2.WestsideF = forecast(M.Westside,method="ets", h=length(Westside.y.test))
@@ -424,7 +424,7 @@ data.frame(Time = 1:length(as.numeric(Westside.y.test)),
   geom_line(aes(x=Time,y=M2.Westside.prediction),col="red") + theme_bw()
 
 smape(as.numeric(Westside.y.test),as.numeric(M2.WestsideF[["mean"]]))
-#sMAPE = %
+#sMAPE = 0.92%
 
 ####### North Hollywood ########
 M2.NorthHollywoodF = forecast(M.NorthHollywood,method="ets",
@@ -443,7 +443,7 @@ data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
   geom_line(aes(x=Time,y=M2.NorthHollywood.prediction),col="red")+theme_bw()
 
 smape(as.numeric(NorthHollywood.y.test),as.numeric(M2.NorthHollywoodF[["mean"]]))
-#sMAPE = %
+#sMAPE = 1.95%
 
 ##################################################### Neural Network ####################################################
 
