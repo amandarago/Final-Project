@@ -245,35 +245,35 @@ NorthHollywood_hourly_demand %>%
 
 #Aggregate(Total) - Testing: July 1 2021 - Sep 30 2021
 
-total.y.train = msts(total_hourly_demand$actual_demand[total_hourly_demand$hour >= as.Date("2016-07-07",format=c("%Y-%m-%d")) &
-                                                         total_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+total.y.train = msts(total_hourly_demand$actual_demand[total_hourly_demand$hour >= ymd_hm("2016-07-07 04:00") &
+                                                         total_hourly_demand$hour <= ymd_hm("2021-06-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
 
-total.y.test = msts(total_hourly_demand$actual_demand[total_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
-                                                        total_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+total.y.test = msts(total_hourly_demand$actual_demand[total_hourly_demand$hour >= ymd_hm("2021-07-01 00:00") &
+                                                        total_hourly_demand$hour <= ymd_hm("2021-09-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
 
 #DTLA - Testing: July 1 2021 - Sep 30 2021
 
-DTLA.y.train = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= as.Date("2016-07-07",format=c("%Y-%m-%d")) &
-                                                       DTLA_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+DTLA.y.train = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= ymd_hm("2016-07-07 04:00") &
+                                                       DTLA_hourly_demand$hour <= ymd_hm("2021-06-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
 
-DTLA.y.test = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
-                                                      DTLA_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+DTLA.y.test = msts(DTLA_hourly_demand$actual_demand[DTLA_hourly_demand$hour >= ymd_hm("2021-07-01 00:00") &
+                                                      DTLA_hourly_demand$hour <= ymd_hm("2021-09-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
 
 #Westside - Training: Sep 1 2017 - June 30 2021 Testing: July 1 2021 - Sep 30 2021
 
-Westside.y.train = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= as.Date("2017-09-01",format=c("%Y-%m-%d")) &
-                                                               Westside_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+Westside.y.train = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= ymd_hm("2017-09-01 00:00") &
+                                                               Westside_hourly_demand$hour <= ymd_hm("2021-06-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
 
-Westside.y.test = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
-                                                              Westside_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7,365.25*24))
+Westside.y.test = msts(Westside_hourly_demand$actual_demand[Westside_hourly_demand$hour >= ymd_hm("2021-07-01 00:00") &
+                                                              Westside_hourly_demand$hour <= ymd_hm("2021-09-30 23:00")],seasonal.periods = c(24,24*7,365.25*24))
 
 #North Hollywood - Training Aug 5 2019- June 30 2021 Testing: July 1 2021 - Sep 30 2021
 
-NorthHollywood.y.train = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2019-08-05",format=c("%Y-%m-%d")) &
-                                                                           NorthHollywood_hourly_demand$hour <= as.Date("2021-06-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7))
+NorthHollywood.y.train = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= ymd_hm("2019-08-05 00:00") &
+                                                                           NorthHollywood_hourly_demand$hour <= ymd_hm("2021-06-30 23:00")],seasonal.periods = c(24,24*7))
 
-NorthHollywood.y.test = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= as.Date("2021-07-01",format=c("%Y-%m-%d")) &
-                                                                          NorthHollywood_hourly_demand$hour <= as.Date("2021-09-30",format=c("%Y-%m-%d"))],seasonal.periods = c(24,24*7))
+NorthHollywood.y.test = msts(NorthHollywood_hourly_demand$actual_demand[NorthHollywood_hourly_demand$hour >= ymd_hm("2021-07-01 00:00") &
+                                                                          NorthHollywood_hourly_demand$hour <= ymd_hm("2021-09-30 23:00")],seasonal.periods = c(24,24*7))
 
 #Yearly seasonality removed because we have less than two years of training data.
 
