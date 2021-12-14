@@ -778,3 +778,77 @@ smape(total_hourly_demand$actual_demand[(length(total.y.train)+1):dim(total_hour
 #after this time, it might produce a more accurate result if it was. Our best guess is that more bikes were put in the Westside
 #at this time which dramatically increased the number of rides.
 
+##################################################### lm Using Daily Data #########################################################
+
+daily.total = total_hourly_demand %>% group_by(day = floor_date(hour,"1 day")) %>% summarize(actual_demand=sum(actual_demand),train_demand = sum(train_demand))
+
+which(daily.total$actual_demand == 0)  
+
+daily.total$DoW = factor(wday(daily.total$day,label=TRUE))
+daily.total$Month = factor(month(daily.total$day,label=TRUE))
+daily.total$Trend = (1:dim(daily.total)[1])
+daily.total$demandLag1 = lag(daily.total$train_demand,1)
+daily.total$demandLag2 = lag(daily.total$train_demand,2)
+daily.total$demandLag6 = lag(daily.total$train_demand,6)
+daily.total$demandLag7 = lag(daily.total$train_demand,7)
+
+daily.total %>% tail(30)
+glimpse(daily.total)
+
+M6.total = lm(train_demand ~ DoW + Month+
+                demandLag7 +
+                DoW:Month,
+              data= daily.total)
+
+daily.total$M6.total = predict(M6.total,newdata=daily.total)
+
+for(i in (1821:dim(daily.total)[1])){
+  daily.total[i,"demandLag1"]=ifelse(is.na(daily.total[i-1,"train_demand"]),daily.total[i-1,"M6.total"],daily.total[i-1,"train_demand"])
+  daily.total[i,"demandLag6"]=ifelse(is.na(daily.total[i-6,"train_demand"]),daily.total[i-6,"M6.total"],daily.total[i-6,"train_demand"])
+  daily.total[i,"demandLag7"]=ifelse(is.na(daily.total[i-7,"train_demand"]),daily.total[i-7,"M6.total"],daily.total[i-7,"train_demand"])
+  daily.total[i,"M6.total"]=predict(M6.total,daily.total[i,])
+}
+
+daily.total %>% ggplot(aes(x=day,y=actual_demand)) +geom_line() + geom_line(aes(x=day,y=M6.total),col="blue") + theme_bw()
+
+daily.total %>% slice(1821:dim(daily.total)[1]) %>% 
+  ggplot(aes(x=day,y=actual_demand))+geom_line()+
+  geom_line(aes(x=day,y=M6.total),col="red")+theme_bw()
+
+daily.total %>% slice(1821:(1821+7)+20) %>% 
+  ggplot(aes(x=day,y=actual_demand))+geom_line()+
+  geom_line(aes(x=day,y=M6.total),col="red")+theme_bw()
+
+smape(daily.total$actual_demand[(length(total.y.train)+1):dim(total_hourly_demand)[1]],
+      total_hourly_demand$M4.total[(length(total.y.train)+1):dim(total_hourly_demand)[1]])
+
+#MAPE on Testing:
+
+mean(abs((daily.total$actual_demand[1821:dim(daily.total)[1]] - 
+            daily.total$M6.total[1821:dim(daily.total)[1]]) / 
+           daily.total$actual_demand[1821:dim(daily.total)[1]]))*100
+
+#19.19%
+
+tsdisplay(M6.total$residuals)
+
+##################################################### Prophet Using Daily Data #########################################################
+
+daily.total.prophet = total_hourly_demand %>% group_by(ds = floor_date(hour,"1 day")) %>% summarize(y = sum(train_demand))
+
+M7 = prophet()
+
+M7 = fit.prophet(M7,daily.total.prophet)
+
+daily_fitted_prophet = predict(M7,daily.total.prophet)
+
+plot(M7,daily_fitted_prophet)
+prophet_plot_components(M7,daily_fitted_prophet)
+
+#MAPE on Testing:
+
+mean(abs((daily.total$actual_demand[1821:dim(daily.total)[1]] - 
+            daily_fitted_prophet$yhat[1821:dim(daily.total)[1]]) / 
+           daily.total$actual_demand[1821:dim(daily.total)[1]]))*100
+
+#20.05%
