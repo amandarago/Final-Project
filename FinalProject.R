@@ -289,87 +289,87 @@ M.NorthHollywood = mstl(NorthHollywood.y.train)
 
 ####### Total ########
 
-M.totalF = forecast(M.total,method="arima",
+M1.totalF = forecast(M.total,method="arima",
                      h=length(total.y.test))
 
-autoplot(M.totalF,PI=F)+autolayer(M.totalF$fitted)
+autoplot(M1.totalF,PI=F)+autolayer(M1.totalF$fitted)
 
 length(as.numeric(total.y.test))
-length(as.numeric(M.totalF[["mean"]]))
+length(as.numeric(M1.totalF[["mean"]]))
 
-#Random Weekly Forecast vs. Actual for M.total
+#Random Weekly Forecast vs. Actual for M1.total
 
 data.frame(Time = 1:length(as.numeric(total.y.test)),
            total.y.test = as.numeric(total.y.test),
-           M.total.prediction = as.numeric(M.totalF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+           M1.total.prediction = as.numeric(M1.totalF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
   ggplot(aes(x=Time,y=total.y.test))+geom_line()+
-  geom_line(aes(x=Time,y=M.total.prediction),col="red")+theme_bw()
+  geom_line(aes(x=Time,y=M1.total.prediction),col="red")+theme_bw()
 
-smape(as.numeric(total.y.test),as.numeric(M.totalF[["mean"]]))
+smape(as.numeric(total.y.test),as.numeric(M1.totalF[["mean"]]))
 #sMAPE = 0.61%
 
 ####### DTLA ########
 
-M.DTLAF = forecast(M.DTLA,method="arima",
+M1.DTLAF = forecast(M.DTLA,method="arima",
                      h=length(DTLA.y.test))
 
-autoplot(M.DTLAF,PI=F)+autolayer(M.DTLAF$fitted)
+autoplot(M1.DTLAF,PI=F)+autolayer(M1.DTLAF$fitted)
 
 length(as.numeric(DTLA.y.test))
-length(as.numeric(M.DTLAF[["mean"]]))
+length(as.numeric(M1.DTLAF[["mean"]]))
 
-#Random Weekly Forecast vs. Actual for M.DTLA
+#Random Weekly Forecast vs. Actual for M1.DTLA
 
 data.frame(Time = 1:length(as.numeric(DTLA.y.test)),
            DTLA.y.test = as.numeric(DTLA.y.test),
-           M.DTLA.prediction = as.numeric(M.DTLAF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+           M1.DTLA.prediction = as.numeric(M1.DTLAF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
   ggplot(aes(x=Time,y=DTLA.y.test))+geom_line()+
-  geom_line(aes(x=Time,y=M.DTLA.prediction),col="red")+theme_bw()
+  geom_line(aes(x=Time,y=M1.DTLA.prediction),col="red")+theme_bw()
 
-smape(as.numeric(DTLA.y.test),as.numeric(M.DTLAF[["mean"]]))
+smape(as.numeric(DTLA.y.test),as.numeric(M1.DTLAF[["mean"]]))
 #sMAPE = 0.65%
 
 ####### Westside ########
 
-M.WestsideF = forecast(M.Westside,method="arima",
+M1.WestsideF = forecast(M.Westside,method="arima",
                      h=length(Westside.y.test))
 
-autoplot(M.WestsideF,PI=F)+autolayer(M.WestsideF$fitted)
+autoplot(M1.WestsideF,PI=F)+autolayer(M1.WestsideF$fitted)
 
 length(as.numeric(Westside.y.test))
-length(as.numeric(M.WestsideF[["mean"]]))
+length(as.numeric(M1.WestsideF[["mean"]]))
 
-#Random Weekly Forecast vs. Actual for M.Westside
+#Random Weekly Forecast vs. Actual for M1.Westside
 
 data.frame(Time = 1:length(as.numeric(Westside.y.test)),
            Westside.y.test = as.numeric(Westside.y.test),
-           M.Westside.prediction = as.numeric(M.WestsideF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+           M1.Westside.prediction = as.numeric(M1.WestsideF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
   ggplot(aes(x=Time,y=Westside.y.test))+geom_line()+
-  geom_line(aes(x=Time,y=M.Westside.prediction),col="red")+theme_bw()
+  geom_line(aes(x=Time,y=M1.Westside.prediction),col="red")+theme_bw()
 
-smape(as.numeric(Westside.y.test),as.numeric(M.WestsideF[["mean"]]))
+smape(as.numeric(Westside.y.test),as.numeric(M1.WestsideF[["mean"]]))
 #sMAPE = 0.89%
 
 
 ####### North Hollywood ########
 
-M.NorthHollywoodF = forecast(M.NorthHollywood,method="arima",
+M1.NorthHollywoodF = forecast(M.NorthHollywood,method="arima",
                      h=length(NorthHollywood.y.test))
 
-autoplot(M.NorthHollywoodF,PI=F)+autolayer(M.NorthHollywoodF$fitted)
+autoplot(M1.NorthHollywoodF,PI=F)+autolayer(M1.NorthHollywoodF$fitted)
 
 length(as.numeric(NorthHollywood.y.test))
-length(as.numeric(M.NorthHollywoodF[["mean"]]))
+length(as.numeric(M1.NorthHollywoodF[["mean"]]))
 
-#Random Weekly Forecast vs. Actual for M.NorthHollywood
+#Random Weekly Forecast vs. Actual for M1.NorthHollywood
 
 data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
            NorthHollywood.y.test = as.numeric(NorthHollywood.y.test),
-           M.NorthHollywood.prediction = as.numeric(M.NorthHollywoodF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+           M1.NorthHollywood.prediction = as.numeric(M1.NorthHollywoodF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
   ggplot(aes(x=Time,y=NorthHollywood.y.test))+geom_line()+
-  geom_line(aes(x=Time,y=M.NorthHollywood.prediction),col="red")+theme_bw()
+  geom_line(aes(x=Time,y=M1.NorthHollywood.prediction),col="red")+theme_bw()
 
-smape(as.numeric(NorthHollywood.y.test),as.numeric(M.NorthHollywoodF[["mean"]]))
+smape(as.numeric(NorthHollywood.y.test),as.numeric(M1.NorthHollywoodF[["mean"]]))
 #sMAPE = 1.95%
 
 ################################################### Exponential Smoothing ####################################################
