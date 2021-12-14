@@ -276,7 +276,7 @@ NorthHollywood.y.test = msts(NorthHollywood_hourly_demand$actual_demand[NorthHol
 
 #Yearly seasonality removed because we have less than two years of training data.
 
-##################################################### Model Buidling ####################################################
+##################################################### Model Building ####################################################
 
 M1.total = mstl(total.y.train)
 M1.DTLA = mstl(DTLA.y.train)
