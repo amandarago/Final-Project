@@ -373,7 +373,77 @@ smape(as.numeric(NorthHollywood.y.test),as.numeric(M1.NorthHollywoodF[["mean"]])
 #sMAPE = 1.95%
 
 ################################################### Exponential Smoothing ####################################################
+####### Total ########
+M2.totalF = forecast(M.total,method="ets",
+                     h=length(total.y.test))
 
+autoplot(M2.totalF,PI=F)+autolayer(M2.totalF$fitted)
+
+length(as.numeric(total.y.test))
+length(as.numeric(M2.totalF[["mean"]]))
+
+#Random Weekly Forecast vs. Actual for M2.total
+data.frame(Time = 1:length(as.numeric(total.y.test)),
+           total.y.test = as.numeric(total.y.test),
+           M2.total.prediction = as.numeric(M2.totalF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+  ggplot(aes(x=Time,y=total.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M2.total.prediction),col="red")+theme_bw()
+
+smape(as.numeric(total.y.test),as.numeric(M2.totalF[["mean"]]))
+#sMAPE = %
+
+####### DTLA ########
+M2.DTLAF = forecast(M.DTLA,method="ets", h=length(DTLA.y.test))
+
+autoplot(M2.DTLAF,PI=F)+autolayer(M2.DTLAF$fitted)
+
+length(as.numeric(DTLA.y.test))
+length(as.numeric(M2.DTLAF[["mean"]]))
+
+#Random Weekly Forecast vs. Actual for M2.DTLA
+data.frame(Time = 1:length(as.numeric(DTLA.y.test)), DTLA.y.test = as.numeric(DTLA.y.test), M2.DTLA.prediction = as.numeric(M2.DTLAF[["mean"]])) %>% 
+  slice(1:(7*24)+100) %>% ggplot(aes(x=Time,y=DTLA.y.test))+geom_line() + 
+  geom_line(aes(x=Time,y=M2.DTLA.prediction),col="red") + theme_bw()
+
+smape(as.numeric(DTLA.y.test),as.numeric(M2.DTLAF[["mean"]]))
+#sMAPE = %
+
+####### Westside ########
+M2.WestsideF = forecast(M.Westside,method="ets", h=length(Westside.y.test))
+
+autoplot(M2.WestsideF,PI=F)+autolayer(M2.WestsideF$fitted)
+
+length(as.numeric(Westside.y.test))
+length(as.numeric(M2.WestsideF[["mean"]]))
+
+#Random Weekly Forecast vs. Actual for M2.Westside
+data.frame(Time = 1:length(as.numeric(Westside.y.test)),
+           Westside.y.test = as.numeric(Westside.y.test),
+           M2.Westside.prediction = as.numeric(M2.WestsideF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+  ggplot(aes(x=Time,y=Westside.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M2.Westside.prediction),col="red") + theme_bw()
+
+smape(as.numeric(Westside.y.test),as.numeric(M2.WestsideF[["mean"]]))
+#sMAPE = %
+
+####### North Hollywood ########
+M2.NorthHollywoodF = forecast(M.NorthHollywood,method="ets",
+                              h=length(NorthHollywood.y.test))
+
+autoplot(M2.NorthHollywoodF,PI=F)+autolayer(M2.NorthHollywoodF$fitted)
+
+length(as.numeric(NorthHollywood.y.test))
+length(as.numeric(M2.NorthHollywoodF[["mean"]]))
+
+#Random Weekly Forecast vs. Actual for M2.NorthHollywood
+data.frame(Time = 1:length(as.numeric(NorthHollywood.y.test)),
+           NorthHollywood.y.test = as.numeric(NorthHollywood.y.test),
+           M2.NorthHollywood.prediction = as.numeric(M2.NorthHollywoodF[["mean"]])) %>% slice(1:(7*24)+100) %>% 
+  ggplot(aes(x=Time,y=NorthHollywood.y.test))+geom_line()+
+  geom_line(aes(x=Time,y=M2.NorthHollywood.prediction),col="red")+theme_bw()
+
+smape(as.numeric(NorthHollywood.y.test),as.numeric(M2.NorthHollywoodF[["mean"]]))
+#sMAPE = %
 
 ##################################################### Neural Network ####################################################
 
