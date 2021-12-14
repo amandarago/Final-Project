@@ -743,41 +743,6 @@ smape(total_hourly_demand$actual_demand[(length(total.y.train)+1):dim(total_hour
 
 #sMAPE: 0.51
 
-##################################################### Model Selection ####################################################
-
-#Aggregate (Total): Lowest sMAPE: Neural Network (0.41)
-
-#DTLA: Lowest sMAPE: ARIMA (0.60)
-
-#Westside: Lowest sMAPE: Exponential Smoothing (0.77)
-
-#North Hollywood: Lowest sMAPE: Linear Regression (1.93)
-
-##################################################### Reflection #########################################################
-
-#It appears that our more complicated models excelled for data sets where there was more data given. For the total and DTLA
-#regions, the Neural Network and ARIMA models performed better because there was the most amount of data possible. For the
-#regions where there was less data, exponential smoothing and linear regression did better, potentially because they were less
-#overfit. The accuracy on the last two models are lower also because when there are less bike rides to model the data off of,
-#it is more difficult to predict reliable patterns.
-
-######### Some things to consider for future research:
-
-#Changing the testing set could reveal which models are overfit, or those whose predictive ability decreases more sharply over
-#time. One quarter was chosen as the testing set time because the data set was somewhat small, but particularly small for
-#certain regions.
-
-#We attempted to use covariates in our models, but the variable we wanted to find we were unable to. We could not find hourly 
-#temperature data for these years, as we could only find 2010 and earlier. Some other covariates we would use as regressors
-#would potentially be air quality, rain, or holidays (especially local LA events such as parades and marathons). For the North
-#Hollywood region this would have been particularly useful as we had to remove the yearly seasonality since there was not
-#enough data to model it. Temperature would be a great regressor to replace this missing data as temperature is heavily related
-#to time of the year.
-
-#There seems to be some sort of intervention for the Westside in late 2020. Although not very much data can be used to model
-#after this time, it might produce a more accurate result if it was. Our best guess is that more bikes were put in the Westside
-#at this time which dramatically increased the number of rides.
-
 ##################################################### lm Using Daily Data #########################################################
 
 daily.total = total_hourly_demand %>% group_by(day = floor_date(hour,"1 day")) %>% summarize(actual_demand=sum(actual_demand),train_demand = sum(train_demand))
@@ -852,3 +817,38 @@ mean(abs((daily.total$actual_demand[1821:dim(daily.total)[1]] -
            daily.total$actual_demand[1821:dim(daily.total)[1]]))*100
 
 #20.05%
+
+##################################################### Hourly Model Selection ####################################################
+
+#Aggregate (Total): Lowest sMAPE: Neural Network (0.41)
+
+#DTLA: Lowest sMAPE: ARIMA (0.60)
+
+#Westside: Lowest sMAPE: Exponential Smoothing (0.77)
+
+#North Hollywood: Lowest sMAPE: Linear Regression (1.93)
+
+##################################################### Reflection #########################################################
+
+#It appears that our more complicated models excelled for data sets where there was more data given. For the total and DTLA
+#regions, the Neural Network and ARIMA models performed better because there was the most amount of data possible. For the
+#regions where there was less data, exponential smoothing and linear regression did better, potentially because they were less
+#overfit. The accuracy on the last two models are lower also because when there are less bike rides to model the data off of,
+#it is more difficult to predict reliable patterns.
+
+######### Some things to consider for future research:
+
+#Changing the testing set could reveal which models are overfit, or those whose predictive ability decreases more sharply over
+#time. One quarter was chosen as the testing set time because the data set was somewhat small, but particularly small for
+#certain regions.
+
+#We attempted to use covariates in our models, but the variable we wanted to find we were unable to. We could not find hourly 
+#temperature data for these years, as we could only find 2010 and earlier. Some other covariates we would use as regressors
+#would potentially be air quality, rain, or holidays (especially local LA events such as parades and marathons). For the North
+#Hollywood region this would have been particularly useful as we had to remove the yearly seasonality since there was not
+#enough data to model it. Temperature would be a great regressor to replace this missing data as temperature is heavily related
+#to time of the year.
+
+#There seems to be some sort of intervention for the Westside in late 2020. Although not very much data can be used to model
+#after this time, it might produce a more accurate result if it was. Our best guess is that more bikes were put in the Westside
+#at this time which dramatically increased the number of rides.
